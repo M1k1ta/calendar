@@ -11,7 +11,7 @@ import {
   TaskText,
 } from './Emotion';
 import { generateColor } from '../../utils/randomColor';
-// import { debounce } from 'lodash';
+import { debounce } from 'lodash';
 
 interface Props {
   task: Task;
@@ -40,12 +40,12 @@ export const TaskItem: React.FC<Props> = React.memo(
       const colors = [...task.colors];
       colors[index] = color;
 
-      onUpdateTask({ id: task.id, text: task.text, colors });
+      debouncedUpdateColors({ id: task.id, text: task.text, colors });
     };
 
-    // const debouncedUpdateColors = debounce((newColor) => {
-    //   onUpdateTask(newColor);
-    // }, 1000);
+    const debouncedUpdateColors = debounce((newColor) => {
+      onUpdateTask(newColor);
+    }, 1000);
 
     const addColor = () => {
       onUpdateTask({

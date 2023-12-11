@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { Droppable } from 'react-beautiful-dnd';
 import { TaskItem } from '../TaskItem';
 import { generateDayId } from '../../utils/date';
@@ -13,7 +13,6 @@ import {
   HolidayName,
   HolidayBox,
 } from './Emotion';
-import { readSearchParams } from '../../utils/searchParams';
 import { AddIcon } from '../../icons/AddIcon';
 
 interface Props {

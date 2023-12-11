@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { FormEvent, useState } from 'react';
-import { readSearchParams, updateSearchParams } from '../../utils/searchParams';
+import { readSearchParams } from '../../utils/searchParams';
 import {
   BackgroundModal,
   Button,

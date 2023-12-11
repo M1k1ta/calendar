@@ -11,6 +11,7 @@ import {
   TaskText,
 } from './Emotion';
 import { generateColor } from '../../utils/randomColor';
+// import { debounce } from 'lodash';
 
 interface Props {
   task: Task;
@@ -19,76 +20,79 @@ interface Props {
   onRemoveTask: (id: string) => void;
 }
 
-export const TaskItem: React.FC<Props> = ({
-  task,
-  index,
-  onUpdateTask,
-  onRemoveTask,
-}) => {
-  const [isUpdating, setIsUpdating] = useState(!task.text);
+export const TaskItem: React.FC<Props> = React.memo(
+  ({ task, index, onUpdateTask, onRemoveTask }: Props) => {
+    const [isUpdating, setIsUpdating] = useState(!task.text);
 
-  const updateText = (text: string) => {
-    onUpdateTask({ id: task.id, text, colors: task.colors });
-  };
+    const updateText = (text: string) => {
+      onUpdateTask({ id: task.id, text, colors: task.colors });
+    };
 
-  const blure = (text: string) => {
-    if (!text) {
-      onRemoveTask(task.id);
-    }
+    const blure = (text: string) => {
+      if (!text) {
+        onRemoveTask(task.id);
+      }
 
-    setIsUpdating(false);
-  };
+      setIsUpdating(false);
+    };
 
-  const updateColors = (color: string, index: number) => {
-    const colors = [...task.colors];
-    colors[index] = color;
+    const updateColors = (color: string, index: number) => {
+      const colors = [...task.colors];
+      colors[index] = color;
 
-    onUpdateTask({ id: task.id, text: task.text, colors });
-  };
+      onUpdateTask({ id: task.id, text: task.text, colors });
+    };
 
-  const addColor = () => {
-    onUpdateTask({
-      id: task.id,
-      text: task.text,
-      colors: [...task.colors, generateColor()],
-    });
-  };
+    // const debouncedUpdateColors = debounce((newColor) => {
+    //   onUpdateTask(newColor);
+    // }, 1000);
 
-  return (
-    <Draggable draggableId={task.id} index={index}>
-      {(provided) => (
-        <TaskBox
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-          ref={provided.innerRef}
-          onDoubleClick={() => setIsUpdating(true)}
-        >
-          <ColorsBox>
-            {task.colors.map((color, index) => (
-              <ColorInput
-                key={color}
-                type="color"
-                value={color}
-                onChange={(event) => updateColors(event.target.value, index)}
+    const addColor = () => {
+      onUpdateTask({
+        id: task.id,
+        text: task.text,
+        colors: [...task.colors, generateColor()],
+      });
+    };
+
+    return (
+      <Draggable draggableId={task.id} index={index}>
+        {(provided) => (
+          <TaskBox
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+            ref={provided.innerRef}
+            onDoubleClick={() => setIsUpdating(true)}
+          >
+            <ColorsBox>
+              {task.colors.map((color, index) => (
+                <ColorInput
+                  key={color}
+                  type="color"
+                  value={color}
+                  onChange={(event) => updateColors(event.target.value, index)}
+                />
+              ))}
+
+              {task.colors.length < 3 && (
+                <AddColorButton type="button" onClick={addColor} />
+              )}
+            </ColorsBox>
+
+            {!isUpdating ? (
+              <TaskText>{task.text}</TaskText>
+            ) : (
+              <TaskInput
+                text={task.text}
+                onChange={(event) => updateText(event.target.value)}
+                onBlur={blure}
               />
-            ))}
-
-            {task.colors.length < 3 && (
-              <AddColorButton type="button" onClick={addColor} />
             )}
-          </ColorsBox>
+          </TaskBox>
+        )}
+      </Draggable>
+    );
+  },
+);
 
-          {!isUpdating ? (
-            <TaskText>{task.text}</TaskText>
-          ) : (
-            <TaskInput
-              text={task.text}
-              onChange={(event) => updateText(event.target.value)}
-              onBlur={blure}
-            />
-          )}
-        </TaskBox>
-      )}
-    </Draggable>
-  );
-};
+TaskItem.displayName = 'TaskItem';

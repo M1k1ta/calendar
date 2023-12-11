@@ -44,19 +44,11 @@ export const HolidayBox = styled('div')`
   border-radius: 3px;
   padding: 5px;
   margin-bottom: 5px;
+  border: 3px solid #ff0000;
 `;
 
 export const HolidayName = styled('p')`
   font-size: 15px;
-  line-height: 15px;
   letter-spacing: 0.6px;
   padding: 3px 0 5px;
-`;
-
-export const Marker = styled('div')`
-  margin: 2px 0;
-  width: 30px;
-  height: 6px;
-  background-color: #f00;
-  border-radius: 6px;
 `;

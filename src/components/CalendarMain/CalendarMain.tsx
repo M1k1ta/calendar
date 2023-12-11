@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { getDaysOfCalendarSlide, monthsOfTheYear } from '../../utils/date';
+import {
+  generateDayId,
+  getDaysOfCalendarSlide,
+  monthsOfTheYear,
+} from '../../utils/date';
 import { Task } from '../../types/Task';
 import { CurrentDate } from '../../types/CurrentDate';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
@@ -8,6 +12,7 @@ import { CalendarCell } from '../CalendarCell';
 import styled from '@emotion/styled';
 import { generateColor } from '../../utils/randomColor';
 import { getPublicHolidays } from '../../api/calendar';
+import { updateSearchParams } from '../../utils/searchParams';
 
 export const Body = styled('section')`
   display: grid;
@@ -20,9 +25,16 @@ export const Body = styled('section')`
 interface Props {
   currentDate: CurrentDate;
   countryCode: string;
+  searchParam: string;
+  colorParam: string;
 }
 
-export const CalendarMain: React.FC<Props> = ({ currentDate, countryCode }) => {
+export const CalendarMain: React.FC<Props> = ({
+  currentDate,
+  countryCode,
+  searchParam,
+  colorParam,
+}) => {
   const [tasks, setTasks] = useState<any>({});
   const [holidays, setHolidays] = useState<any>({});
   const { currentMonth, currentYear } = currentDate;
@@ -30,6 +42,9 @@ export const CalendarMain: React.FC<Props> = ({ currentDate, countryCode }) => {
   const countRows = dates.length === 35 ? 5 : 6;
 
   const handleCreateTask = (cellId: string) => {
+    updateSearchParams('search', '');
+    updateSearchParams('color', '');
+
     const newTask: Task = {
       id: v4(),
       colors: [generateColor()],
@@ -116,6 +131,7 @@ export const CalendarMain: React.FC<Props> = ({ currentDate, countryCode }) => {
           const isFirstOrLastDayOfMonth =
             date.getDate() === 1 || dates[i + 1]?.getDate() === 1;
           const monthName = monthsOfTheYear[date.getMonth()].slice(0, 3);
+          const cellId = generateDayId(date);
 
           return (
             <CalendarCell
@@ -123,9 +139,11 @@ export const CalendarMain: React.FC<Props> = ({ currentDate, countryCode }) => {
               date={date}
               currentMonth={currentMonth}
               countRows={countRows}
-              tasks={tasks}
+              tasks={tasks[cellId] || []}
               holidays={holidays}
               monthName={isFirstOrLastDayOfMonth ? monthName : ''}
+              searchParam={searchParam}
+              colorParam={colorParam}
               onCreateTask={handleCreateTask}
               onUpdateTask={handleUpdateTask}
               onRemoveTask={handleRemoveTask}

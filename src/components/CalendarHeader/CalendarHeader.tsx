@@ -3,17 +3,23 @@ import React, { useEffect, useState } from 'react';
 import { CurrentDate } from '../../types/CurrentDate';
 import { daysOfTheWeek, monthsOfTheYear } from '../../utils/date';
 import {
-  Button,
+  PaginationButton,
   CalendarDate,
   ColumnName,
   Columns,
   Header,
   Management,
-  Pagination,
+  Button,
+  Box,
 } from './Emotion';
 import { getAvailableCountries } from '../../api/calendar';
 import { Country } from '../../types/Country';
 import { Select } from '../Select';
+import { FilterModal } from '../FilterModal';
+import { FilterIcon } from '../../icons/FilterIcon';
+import downloadjs from 'downloadjs';
+import html2canvas from 'html2canvas';
+import { DownloadIcon } from '../../icons/DownloadIcon';
 
 interface Props {
   currentDate: CurrentDate;
@@ -21,6 +27,8 @@ interface Props {
   onPrev: () => void;
   onNext: () => void;
   onCountryCode: (countryCode: string) => void;
+  onSearchParam: (value: string) => void;
+  onColorParam: (value: string) => void;
 }
 
 export const CalendarHeader: React.FC<Props> = ({
@@ -29,9 +37,18 @@ export const CalendarHeader: React.FC<Props> = ({
   onPrev,
   onNext,
   onCountryCode,
+  onSearchParam,
+  onColorParam,
 }) => {
   const [countries, setCountries] = useState<Country[]>([]);
+  const [isFilter, setIsFilter] = useState(false);
   const { currentMonth, currentYear } = currentDate;
+
+  const downloadImage = async () => {
+    const canvas = await html2canvas(document.body);
+    const dataURL = canvas.toDataURL('image/png');
+    downloadjs(dataURL, 'download.png', 'image/png');
+  };
 
   const loadCountyCodes = async () => {
     try {
@@ -50,18 +67,28 @@ export const CalendarHeader: React.FC<Props> = ({
   return (
     <Header>
       <Management>
-        <Select
-          countryCode={countryCode}
-          countries={countries}
-          onChange={onCountryCode}
-        />
+        <Box>
+          <Select
+            countryCode={countryCode}
+            countries={countries}
+            onChange={onCountryCode}
+          />
+
+          <Button type="button" onClick={() => setIsFilter(true)}>
+            <FilterIcon />
+          </Button>
+
+          <Button type="button" onClick={downloadImage}>
+            <DownloadIcon />
+          </Button>
+        </Box>
 
         <CalendarDate>{`${monthsOfTheYear[currentMonth]} ${currentYear}`}</CalendarDate>
 
-        <Pagination>
-          <Button onClick={onPrev}>{'<'}</Button>
-          <Button onClick={onNext}>{'>'}</Button>
-        </Pagination>
+        <Box>
+          <PaginationButton onClick={onPrev}>{'<'}</PaginationButton>
+          <PaginationButton onClick={onNext}>{'>'}</PaginationButton>
+        </Box>
       </Management>
 
       <Columns>
@@ -69,6 +96,14 @@ export const CalendarHeader: React.FC<Props> = ({
           <ColumnName key={day}>{day}</ColumnName>
         ))}
       </Columns>
+
+      {isFilter && (
+        <FilterModal
+          onClose={() => setIsFilter(false)}
+          onSearchParam={onSearchParam}
+          onColorParam={onColorParam}
+        />
+      )}
     </Header>
   );
 };

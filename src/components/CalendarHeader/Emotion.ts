@@ -30,7 +30,7 @@ export const CalendarDate = styled('h2')`
   font-size: 20px;
 `;
 
-export const Button = styled('button')`
+export const PaginationButton = styled('button')`
   height: 30px;
   width: 30px;
   line-height: 28px;
@@ -46,7 +46,23 @@ export const Button = styled('button')`
   }
 `;
 
-export const Pagination = styled('div')`
+export const Box = styled('div')`
   display: flex;
   gap: 10px;
+`;
+
+export const Button = styled('button')`
+  height: 30px;
+  width: 30px;
+  line-height: 38px;
+  border: none;
+  background-color: #e3e4e6;
+  border-radius: 6px;
+  border-bottom: 2px solid #fd8701;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #dddee0;
+  }
 `;

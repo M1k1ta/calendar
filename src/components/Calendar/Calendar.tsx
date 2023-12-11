@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { CalendarMain } from '../CalendarMain';
 import { CalendarHeader } from '../CalendarHeader';
 import styled from '@emotion/styled';
+import { readSearchParams, updateSearchParams } from '../../utils/searchParams';
 
-export const CalendarBox = styled('section')`
+const CalendarBox = styled('section')`
   width: 100%;
   height: 100vh;
   background-color: #eeeff1;
 `;
 
-export const Cap = styled('div')`
+const Cap = styled('div')`
   height: 20px;
   background-color: #fd8701;
 `;
@@ -21,7 +22,11 @@ const defaultDate = {
 
 export const Calendar = () => {
   const [currentDate, setCurrentDate] = useState(defaultDate);
-  const [countryCode, setCountryCode] = useState<string>('UA');
+  const [countryCode, setCountryCode] = useState('UA');
+  const [searchParam, setSearchParam] = useState(
+    readSearchParams('search') || '',
+  );
+  const [colorParam, setColorParam] = useState(readSearchParams('color') || '');
 
   const handlePrev = () => {
     setCurrentDate((currentDate) => {
@@ -43,6 +48,11 @@ export const Calendar = () => {
     });
   };
 
+  useEffect(() => {
+    updateSearchParams('search', searchParam);
+    updateSearchParams('color', colorParam);
+  }, [searchParam, colorParam]);
+
   return (
     <CalendarBox>
       <Cap />
@@ -52,8 +62,15 @@ export const Calendar = () => {
         onPrev={handlePrev}
         onNext={handleNext}
         onCountryCode={setCountryCode}
+        onSearchParam={setSearchParam}
+        onColorParam={setColorParam}
       />
-      <CalendarMain currentDate={currentDate} countryCode={countryCode} />
+      <CalendarMain
+        currentDate={currentDate}
+        countryCode={countryCode}
+        searchParam={searchParam}
+        colorParam={colorParam}
+      />
     </CalendarBox>
   );
 };

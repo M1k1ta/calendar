@@ -29,69 +29,73 @@ interface Props {
   onRemoveTask: (id: string, cellId: string) => void;
 }
 
-export const CalendarCell: React.FC<Props> = ({
-  date,
-  currentMonth,
-  countRows,
-  monthName,
-  tasks,
-  holidays,
-  searchParam,
-  colorParam,
-  onCreateTask,
-  onUpdateTask,
-  onRemoveTask,
-}) => {
-  const day = date.getDate();
-  const month = date.getMonth();
-  const cellId = generateDayId(date);
+export const CalendarCell: React.FC<Props> = React.memo(
+  ({
+    date,
+    currentMonth,
+    countRows,
+    monthName,
+    tasks,
+    holidays,
+    searchParam,
+    colorParam,
+    onCreateTask,
+    onUpdateTask,
+    onRemoveTask,
+  }: Props) => {
+    const day = date.getDate();
+    const month = date.getMonth();
+    const cellId = generateDayId(date);
 
-  const filteredTasks = useMemo(
-    () =>
-      tasks.filter(
-        ({ text, colors }) =>
-          (text.toLowerCase().includes(searchParam.toLowerCase()) &&
-            colorParam === '') ||
-          colors.includes(colorParam),
-      ),
-    [searchParam, colorParam, tasks],
-  );
+    const filteredTasks = useMemo(
+      () =>
+        tasks.filter(
+          ({ text, colors }) =>
+            (text.toLowerCase().includes(searchParam.toLowerCase()) &&
+              colorParam === '') ||
+            colors.includes(colorParam),
+        ),
+      [searchParam, colorParam, tasks],
+    );
 
-  return (
-    <Cell
-      style={{
-        opacity: month === currentMonth ? 1 : 0.4,
-        height: `calc((100vh - (100px + 5px + 20px)) / ${countRows})`,
-      }}
-    >
-      <Box>
-        <Text>{`${monthName} ${day}`}</Text>
-        <Button onClick={() => onCreateTask(cellId)}>
-          <AddIcon />
-        </Button>
-      </Box>
+    return (
+      <Cell
+        style={{
+          opacity: month === currentMonth ? 1 : 0.4,
+          height: `calc((100vh - (100px + 5px + 20px)) / ${countRows})`,
+        }}
+      >
+        <Box>
+          <Text>{`${monthName} ${day}`}</Text>
+          <Button onClick={() => onCreateTask(cellId)}>
+            <AddIcon />
+          </Button>
+        </Box>
 
-      <Droppable droppableId={cellId}>
-        {(provided) => (
-          <TasksBox ref={provided.innerRef} {...provided.droppableProps}>
-            {holidays[cellId] && (
-              <HolidayBox>
-                <HolidayName>{holidays[cellId].name}</HolidayName>
-              </HolidayBox>
-            )}
-            {filteredTasks.map((task: Task, index: number) => (
-              <TaskItem
-                key={task.id}
-                task={task}
-                index={index}
-                onUpdateTask={(task) => onUpdateTask(task, cellId)}
-                onRemoveTask={(id) => onRemoveTask(id, cellId)}
-              />
-            ))}
-            {provided.placeholder}
-          </TasksBox>
-        )}
-      </Droppable>
-    </Cell>
-  );
-};
+        <Droppable droppableId={cellId}>
+          {(provided) => (
+            <TasksBox ref={provided.innerRef} {...provided.droppableProps}>
+              {holidays[cellId] && (
+                <HolidayBox>
+                  <HolidayName>{holidays[cellId].name}</HolidayName>
+                </HolidayBox>
+              )}
+              {filteredTasks.map((task: Task, index: number) => (
+                <TaskItem
+                  key={task.id}
+                  task={task}
+                  index={index}
+                  onUpdateTask={(task) => onUpdateTask(task, cellId)}
+                  onRemoveTask={(id) => onRemoveTask(id, cellId)}
+                />
+              ))}
+              {provided.placeholder}
+            </TasksBox>
+          )}
+        </Droppable>
+      </Cell>
+    );
+  },
+);
+
+CalendarCell.displayName = 'CalendarCell';

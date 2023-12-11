@@ -70,6 +70,8 @@ export const Calendar = () => {
         countryCode={countryCode}
         searchParam={searchParam}
         colorParam={colorParam}
+        onSearchParam={setSearchParam}
+        onColorParam={setColorParam}
       />
     </CalendarBox>
   );

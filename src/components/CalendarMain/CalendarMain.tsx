@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import {
   generateDayId,
@@ -27,6 +28,8 @@ interface Props {
   countryCode: string;
   searchParam: string;
   colorParam: string;
+  onSearchParam: (value: string) => void;
+  onColorParam: (value: string) => void;
 }
 
 export const CalendarMain: React.FC<Props> = ({
@@ -34,6 +37,8 @@ export const CalendarMain: React.FC<Props> = ({
   countryCode,
   searchParam,
   colorParam,
+  onSearchParam,
+  onColorParam,
 }) => {
   const [tasks, setTasks] = useState<any>({});
   const [holidays, setHolidays] = useState<any>({});
@@ -42,8 +47,8 @@ export const CalendarMain: React.FC<Props> = ({
   const countRows = dates.length === 35 ? 5 : 6;
 
   const handleCreateTask = (cellId: string) => {
-    updateSearchParams('search', '');
-    updateSearchParams('color', '');
+    onSearchParam('');
+    onColorParam('');
 
     const newTask: Task = {
       id: v4(),

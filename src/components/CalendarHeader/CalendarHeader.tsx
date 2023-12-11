@@ -67,12 +67,18 @@ export const CalendarHeader: React.FC<Props> = ({
   return (
     <Header>
       <Management>
+        <Select
+          countryCode={countryCode}
+          countries={countries}
+          onChange={onCountryCode}
+        />
+
+        <CalendarDate>{`${monthsOfTheYear[currentMonth]} ${currentYear}`}</CalendarDate>
+
         <Box>
-          <Select
-            countryCode={countryCode}
-            countries={countries}
-            onChange={onCountryCode}
-          />
+          <PaginationButton onClick={onPrev}>{'<'}</PaginationButton>
+
+          <PaginationButton onClick={onNext}>{'>'}</PaginationButton>
 
           <Button type="button" onClick={() => setIsFilter(true)}>
             <FilterIcon />
@@ -81,13 +87,6 @@ export const CalendarHeader: React.FC<Props> = ({
           <Button type="button" onClick={downloadImage}>
             <DownloadIcon />
           </Button>
-        </Box>
-
-        <CalendarDate>{`${monthsOfTheYear[currentMonth]} ${currentYear}`}</CalendarDate>
-
-        <Box>
-          <PaginationButton onClick={onPrev}>{'<'}</PaginationButton>
-          <PaginationButton onClick={onNext}>{'>'}</PaginationButton>
         </Box>
       </Management>
 
